@@ -1,0 +1,1730 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kenoma Studio - Juegos Futuros</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #050505;
+            --bg-2: #0b0b0b;
+            --bg-3: #121212;
+            --glass: rgba(255, 255, 255, 0.04);
+            --glass-strong: rgba(255, 255, 255, 0.07);
+            --line: rgba(255, 255, 255, 0.16);
+            --line-strong: rgba(255, 255, 255, 0.34);
+            --text: #ffffff;
+            --muted: #b9b9b9;
+            --muted-2: #888;
+            --gold: #ffd700;
+            --danger: #ff6b6b;
+            --success: #34d399;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background:
+                radial-gradient(circle at 10% 10%, rgba(255,255,255,0.07), transparent 24%),
+                radial-gradient(circle at 90% 0%, rgba(255,255,255,0.05), transparent 25%),
+                linear-gradient(135deg, #000 0%, #111 100%);
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background: linear-gradient(120deg, rgba(255,255,255,0.03), transparent 35%, rgba(255,255,255,0.02));
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /*  HEADER  */
+        header {
+            background: rgba(0, 0, 0, 0.68);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--line);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: var(--text);
+            text-shadow: 0 0 20px rgba(255,255,255,0.12);
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            list-style: none;
+        }
+
+        .nav-menu a {
+            color: var(--text);
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            position: relative;
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #fff;
+            transition: width 0.3s;
+        }
+
+        .nav-menu a:hover::after {
+            width: 100%;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn,
+        .btn-small,
+        .game-btn,
+        .coming-soon-btn,
+        .modal-buttons button,
+        .thread-tab,
+        .btn-chip {
+            border: 1px solid rgba(255, 255, 255, 0.72);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+        }
+
+        .btn,
+        .coming-soon-btn {
+            padding: 0.7rem 1.4rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .btn-small,
+        .thread-tab,
+        .btn-chip {
+            padding: 0.55rem 0.9rem;
+            font-size: 0.82rem;
+            font-weight: 500;
+        }
+
+        .game-btn,
+        .modal-buttons button {
+            padding: 0.8rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .btn::before,
+        .btn-small::before,
+        .game-btn::before,
+        .coming-soon-btn::before,
+        .modal-buttons button::before,
+        .thread-tab::before,
+        .btn-chip::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.12);
+            transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: -1;
+        }
+
+        .btn:hover::before,
+        .btn-small:hover::before,
+        .game-btn:hover::before,
+        .coming-soon-btn:hover::before,
+        .modal-buttons button:hover::before,
+        .thread-tab:hover::before,
+        .btn-chip:hover::before {
+            left: 0;
+        }
+
+        .btn:hover,
+        .btn-small:hover,
+        .game-btn:hover,
+        .coming-soon-btn:hover,
+        .modal-buttons button:hover,
+        .thread-tab:hover,
+        .btn-chip:hover {
+            border-color: rgba(255, 255, 255, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 26px rgba(255, 255, 255, 0.08);
+        }
+
+        .btn-primary {
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.95);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(255, 255, 255, 0.12);
+        }
+
+        .btn-pill-active {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 1);
+        }
+
+        /*  ANNOUNCEMENTS SECTION */
+        .announcements-section {
+            margin-bottom: 4rem;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .announcements-wrapper {
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.02) inset;
+        }
+
+        .announcements-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.2rem;
+            border-bottom: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .announcements-title {
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .announcements-tools {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        .thread-tabs {
+            display: flex;
+            gap: 0.6rem;
+            padding: 1rem 1.2rem;
+            border-bottom: 1px solid var(--line);
+            overflow-x: auto;
+            scrollbar-width: thin;
+        }
+
+        .thread-tab {
+            white-space: nowrap;
+            opacity: 0.85;
+        }
+
+        .thread-tab.active {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 1);
+            opacity: 1;
+        }
+
+        .announcement-content {
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            animation: slideInAnnouncement 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideInAnnouncement {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .announcement-card {
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 1.4rem;
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(14px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .announcement-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #fff 0%, rgba(255,255,255,0.25) 100%);
+            animation: animateGradient 3s ease-in-out infinite;
+        }
+
+        @keyframes animateGradient {
+            0%, 100% { opacity: 0.45; }
+            50% { opacity: 1; }
+        }
+
+        .announcement-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.65rem;
+            color: #fff;
+        }
+
+        .announcement-text {
+            color: var(--muted);
+            line-height: 1.7;
+            margin-bottom: 1rem;
+        }
+
+        .announcement-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            color: var(--muted-2);
+            font-size: 0.8rem;
+        }
+
+        .announcement-controls {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--line);
+            flex-wrap: wrap;
+        }
+
+        .btn-danger {
+            border-color: rgba(255, 107, 107, 0.8) !important;
+            color: #ffb5b5 !important;
+        }
+
+        .btn-danger:hover {
+            box-shadow: 0 10px 26px rgba(255, 107, 107, 0.08) !important;
+        }
+
+        /*  HERO SECTION */
+        .hero {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+            padding: 4rem 0;
+            min-height: 600px;
+            animation: fadeIn 0.8s ease-out 0.2s both;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ffffff 0%, #cfcfcf 50%, #8a8a8a 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+            animation: fadeInText 1s ease-out 0.3s both;
+        }
+
+        @keyframes fadeInText {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-content p {
+            font-size: 1.1rem;
+            color: var(--muted);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            animation: fadeInText 1s ease-out 0.4s both;
+        }
+
+        .hero-visual {
+            position: relative;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeInText 1s ease-out 0.5s both;
+        }
+
+        .question-mark {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 200px;
+            font-weight: bold;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.08), transparent 60%);
+            border-radius: 50%;
+            color: rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        /* ============ GAMES SECTION ============ */
+        .games-section {
+            padding: 4rem 0;
+            animation: fadeIn 0.8s ease-out 0.3s both;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 3rem;
+            color: #ffffff;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 50%;
+            height: 3px;
+            background: linear-gradient(90deg, #fff 0%, rgba(255,255,255,0.2) 100%);
+            border-radius: 2px;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            animation: fadeIn 0.6s ease-out;
+            backdrop-filter: blur(14px);
+        }
+
+        .game-card:hover {
+            border-color: var(--line-strong);
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 20px 40px rgba(255, 255, 255, 0.08);
+        }
+
+        .game-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            color: rgba(255, 255, 255, 0.35);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.5s;
+        }
+
+        .game-card:hover .game-image {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.04) 100%);
+            transform: scale(1.03);
+        }
+
+        .game-info {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .game-status {
+            color: #fff;
+            opacity: 0.85;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .game-rating {
+            color: var(--gold);
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        .game-description {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            flex-grow: 1;
+        }
+
+        .game-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .game-btn {
+            flex: 1;
+        }
+
+        .game-btn:hover {
+            color: #fff;
+        }
+
+        .game-btn:active {
+            animation: pulse-click 0.5s ease-out;
+        }
+
+        @keyframes pulse-click {
+            0% { transform: scale(1) translateY(-2px); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1) translateY(-2px); }
+        }
+
+        .game-btn.installed {
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(255,255,255,1);
+        }
+
+        /*  LIBRARY SECTION  */
+        .library-section {
+            padding: 4rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            animation: fadeIn 0.8s ease-out 0.4s both;
+        }
+
+        .installed-games {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .installed-game {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            animation: fadeIn 0.6s ease-out;
+            backdrop-filter: blur(14px);
+        }
+
+        .installed-game:hover {
+            border-color: var(--line-strong);
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(255, 255, 255, 0.08);
+        }
+
+        .installed-game-image {
+            font-size: 60px;
+            margin-bottom: 1rem;
+            transition: all 0.3s;
+        }
+
+        .installed-game:hover .installed-game-image {
+            transform: scale(1.1) rotate(10deg);
+        }
+
+        .installed-game-name {
+            color: #ffffff;
+            font-weight: 500;
+            margin-bottom: 0.4rem;
+            font-size: 0.95rem;
+        }
+
+        .installed-game-status {
+            color: var(--muted);
+            font-size: 0.8rem;
+        }
+
+        .empty-library {
+            text-align: center;
+            padding: 3rem;
+            color: #888;
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 14px;
+            animation: fadeIn 0.6s ease-out;
+            background: rgba(255,255,255,0.01);
+            backdrop-filter: blur(12px);
+        }
+
+        /* ============ MODALS ============ */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.82);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+            animation: fadeBackdrop 0.3s ease-out;
+        }
+
+        @keyframes fadeBackdrop {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, rgba(18,18,18,0.92) 0%, rgba(8,8,8,0.95) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 18px;
+            padding: 2rem;
+            max-width: 520px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            margin: auto;
+            animation: slideInModal 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            backdrop-filter: blur(16px);
+        }
+
+        @keyframes slideInModal {
+            from { opacity: 0; transform: translateY(-50px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .modal-header {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 1rem;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #666;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.06);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.08);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .star-rating {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .star {
+            font-size: 2rem;
+            cursor: pointer;
+            color: #666;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .star:hover,
+        .star.active {
+            color: var(--gold);
+            transform: scale(1.2) rotate(15deg);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+        }
+
+        .modal-buttons button:hover {
+            color: #fff;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-modal:hover {
+            border-color: rgba(255, 255, 255, 0.95);
+            color: #ffffff;
+            transform: rotate(90deg);
+        }
+
+        /* REVIEWS SECTION  */
+        .reviews-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .reviews-title {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .reviews-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 1.5rem;
+        }
+
+        .review-item {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            padding: 1rem;
+            animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-user {
+            color: #fff;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .review-stars {
+            color: var(--gold);
+            font-size: 0.85rem;
+        }
+
+        .review-text {
+            color: var(--muted);
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .no-reviews {
+            text-align: center;
+            color: #888;
+            padding: 1rem;
+            font-size: 0.9rem;
+        }
+
+        /* COMING SOON MODAL  */
+        .coming-soon-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .coming-soon-modal.active {
+            display: flex;
+        }
+
+        .coming-soon-content {
+            text-align: center;
+            animation: zoomIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 1rem;
+        }
+
+        @keyframes zoomIn {
+            from { opacity: 0; transform: scale(0.9) translateY(-50px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .coming-soon-content h2 {
+            font-size: 3rem;
+            color: #fff;
+            margin-bottom: 1rem;
+        }
+
+        .coming-soon-content p {
+            font-size: 1.2rem;
+            color: #ffffff;
+            margin-bottom: 2rem;
+        }
+
+        .coming-soon-btn:hover {
+            color: #fff;
+        }
+
+        /* = FOOTER  */
+        footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 0;
+            text-align: center;
+            color: #888;
+            margin-top: 4rem;
+        }
+
+        /*  RESPONSIVE  */
+        @media (max-width: 768px) {
+            .hero {
+                grid-template-columns: 1fr;
+                padding: 2rem 0;
+            }
+
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+
+            .hero-visual {
+                height: 300px;
+            }
+
+            .question-mark {
+                width: 200px;
+                height: 200px;
+                font-size: 120px;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .game-buttons {
+                flex-direction: column;
+            }
+
+            .announcement-content {
+                padding: 1rem;
+            }
+
+            .announcements-topbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .modal-buttons {
+                flex-direction: column;
+            }
+        }
+
+        .user-greeting {
+            color: #ffffff;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn {
+            border: 1px solid rgba(255, 255, 255, 0.75);
+        }
+
+        .logout-btn:hover {
+            border-color: rgba(255, 255, 255, 1);
+            color: #ffffff;
+        }
+
+        .success-message {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            animation: slideDown 0.4s ease-out;
+        }
+
+        .editor-hint {
+            color: var(--muted-2);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        .section-glass {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.08);
+            backdrop-filter: blur(14px);
+            border-radius: 18px;
+            padding: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">◆ KENOMA</div>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="#home">Inicio</a></li>
+                    <li><a href="#announcements">Anuncios</a></li>
+                    <li><a href="#games">Juegos</a></li>
+                    <li><a href="#library">Mi Biblioteca</a></li>
+                </ul>
+            </nav>
+            <div class="auth-buttons">
+                <div id="authContainer">
+                    <button class="btn" onclick="openLoginModal()">Iniciar Sesión</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="announcements-section" id="announcements">
+            <div class="announcements-wrapper">
+                <div class="announcements-topbar">
+                    <div class="announcements-title">Anuncios / Hilos</div>
+                    <div class="announcements-tools" id="adminEditPanel" style="display: none;">
+                        <button class="btn-small" onclick="openAnnouncementModal()">+ Nuevo anuncio</button>
+                        <button class="btn-small" onclick="toggleAnnouncementEditor()">✎ Editar actual</button>
+                    </div>
+                </div>
+                <div class="thread-tabs" id="announcementsTabs"></div>
+                <div class="announcement-content" id="announcementsContent"></div>
+            </div>
+        </section>
+
+        <section class="hero" id="home">
+            <div class="hero-content">
+                <h1>Kenoma Studio</h1>
+                <p>Explora el futuro de los juegos. Descubre experiencias innovadoras y próximamente disponibles.</p>
+                <button class="btn btn-primary" onclick="document.getElementById('games').scrollIntoView({behavior: 'smooth'})">Explorar Juegos</button>
+            </div>
+            <div class="hero-visual">
+                <div class="question-mark">?</div>
+            </div>
+        </section>
+
+        <section class="games-section" id="games">
+            <h2 class="section-title">Juegos Disponibles</h2>
+            <div class="games-grid" id="gamesGrid"></div>
+        </section>
+
+        <section class="library-section" id="library" style="display: none;">
+            <h2 class="section-title">Mi Biblioteca</h2>
+            <div id="libraryContent">
+                <div class="empty-library">
+                    <p>Instala juegos para que aparezcan aquí</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Kenoma Studio. Todos los derechos reservados.</p>
+    </footer>
+
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeLoginModal()">✕</button>
+            <div class="modal-header">Iniciar Sesión</div>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Usuario</label>
+                    <input type="text" id="loginUsername" required>
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn-confirm">Entrar</button>
+                    <button type="button" class="btn-cancel" onclick="switchToRegister()">Crear Cuenta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeRegisterModal()">✕</button>
+            <div class="modal-header">Crear Cuenta</div>
+            <form onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label>Usuario</label>
+                    <input type="text" id="registerUsername" required>
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="registerPassword" required>
+                </div>
+                <div class="form-group">
+                    <label>Confirmar Contraseña</label>
+                    <input type="password" id="registerPasswordConfirm" required>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn-confirm">Crear Cuenta</button>
+                    <button type="button" class="btn-cancel" onclick="switchToLogin()">Volver al Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="reviewModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeReviewModal()">✕</button>
+            <div class="modal-header" id="reviewGameTitle">Escribir Reseña</div>
+            <form onsubmit="handleReview(event)">
+                <div class="form-group">
+                    <label>Tu Calificación</label>
+                    <div class="star-rating" id="starRating">
+                        <span class="star" onclick="setRating(1)">★</span>
+                        <span class="star" onclick="setRating(2)">★</span>
+                        <span class="star" onclick="setRating(3)">★</span>
+                        <span class="star" onclick="setRating(4)">★</span>
+                        <span class="star" onclick="setRating(5)">★</span>
+                    </div>
+                    <input type="hidden" id="reviewRating" value="0">
+                </div>
+                <div class="form-group">
+                    <label>Tu Reseña</label>
+                    <textarea id="reviewText" placeholder="Cuéntanos qué piensas..." required></textarea>
+                </div>
+                <div class="reviews-section">
+                    <h3 class="reviews-title">Reseñas de la Comunidad</h3>
+                    <div class="reviews-list" id="reviewsList">
+                        <div class="no-reviews">Cargando reseñas...</div>
+                    </div>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn-confirm">Enviar Reseña</button>
+                    <button type="button" class="btn-cancel" onclick="closeReviewModal()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="announcementModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeAnnouncementModal()">✕</button>
+            <div class="modal-header" id="announcementModalTitle">Editar Anuncio</div>
+            <form onsubmit="saveAnnouncement(event)">
+                <div class="form-group">
+                    <label>Título</label>
+                    <input type="text" id="announcementTitle" required>
+                </div>
+                <div class="form-group">
+                    <label>Contenido</label>
+                    <textarea id="announcementText" required></textarea>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn-confirm">Guardar</button>
+                    <button type="button" class="btn-cancel" onclick="closeAnnouncementModal()">Cancelar</button>
+                    <button type="button" class="btn-cancel btn-danger" onclick="deleteAnnouncement()">Eliminar</button>
+                </div>
+                <div class="editor-hint">Los anuncios aparecen como pestañas tipo hilo arriba.</div>
+            </form>
+        </div>
+    </div>
+
+    <div class="coming-soon-modal" id="comingSoonModal">
+        <div class="coming-soon-content">
+            <h2>Coming Soon</h2>
+            <p id="comingSoonGameName"></p>
+            <button class="coming-soon-btn" onclick="closeComingSoon()">Entendido</button>
+        </div>
+    </div>
+
+    <script>
+        let currentGameId = null;
+        let currentRating = 0;
+        let currentAnnouncementIndex = 0;
+        let editingAnnouncementIndex = null;
+
+        const defaultAnnouncements = [
+            {
+                title: '¡Bienvenido a Kenoma Studio!',
+                text: 'Explora un universo de juegos innovadores. Sé parte de nuestra comunidad y descubre experiencias que desafían la realidad.',
+                date: new Date().toLocaleDateString('es-ES')
+            },
+            {
+                title: 'Nuevo hilo: Brainnes',
+                text: 'Brainnes entra en etapa de desarrollo. Habrá nuevos sistemas, contenido futurista y una experiencia más oscura y envolvente.',
+                date: new Date().toLocaleDateString('es-ES')
+            },
+            {
+                title: 'Actualización del estudio',
+                text: 'Se agregaron pestañas nuevas para que puedas organizar anuncios como hilos. Cada hilo funciona como una publicación independiente.',
+                date: new Date().toLocaleDateString('es-ES')
+            }
+        ];
+
+        const games = [
+            { id: 1, name: 'Brainnes', status: 'Próximamente', description: 'Una experiencia futurista que desafiará tu mente', image: '?' },
+            { id: 2, name: 'Echo Void', status: 'Próximamente', description: 'Terror psicológico dentro de una señal rota', image: '?' },
+            { id: 3, name: 'Neon Fracture', status: 'Próximamente', description: 'Acción rápida y luces rotas en un mundo digital', image: '?' }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAnnouncements();
+            loadGames();
+            checkUserStatus();
+            initializeAdminPanel();
+        });
+
+        //  ANNOUNCEMENTS //
+        function loadAnnouncements() {
+            const announcements = JSON.parse(localStorage.getItem('kenomaAnnouncements') || JSON.stringify(defaultAnnouncements));
+            if (!localStorage.getItem('kenomaAnnouncements')) {
+                localStorage.setItem('kenomaAnnouncements', JSON.stringify(defaultAnnouncements));
+            }
+            if (currentAnnouncementIndex >= announcements.length) currentAnnouncementIndex = 0;
+            displayAnnouncement(currentAnnouncementIndex, announcements);
+            createAnnouncementTabs(announcements);
+        }
+
+        function createAnnouncementTabs(announcements = null) {
+            const ann = announcements || JSON.parse(localStorage.getItem('kenomaAnnouncements') || JSON.stringify(defaultAnnouncements));
+            const tabs = document.getElementById('announcementsTabs');
+            tabs.innerHTML = '';
+
+            ann.forEach((item, index) => {
+                const tab = document.createElement('button');
+                tab.className = `thread-tab ${index === currentAnnouncementIndex ? 'active' : ''}`;
+                tab.textContent = item.title;
+                tab.onclick = () => {
+                    currentAnnouncementIndex = index;
+                    displayAnnouncement(index, ann);
+                    createAnnouncementTabs(ann);
+                };
+                tabs.appendChild(tab);
+            });
+        }
+
+        function displayAnnouncement(index, announcements = null) {
+            const ann = announcements || JSON.parse(localStorage.getItem('kenomaAnnouncements') || JSON.stringify(defaultAnnouncements));
+            if (!ann.length) return;
+
+            const announcement = ann[index];
+            const content = document.getElementById('announcementsContent');
+
+            content.innerHTML = `
+                <div class="announcement-card">
+                    <div class="announcement-title">${announcement.title}</div>
+                    <div class="announcement-text">${announcement.text}</div>
+                    <div class="announcement-meta">
+                        <span>Fecha: ${announcement.date}</span>
+                        <span>Hilo ${index + 1} de ${ann.length}</span>
+                    </div>
+                    ${isAdmin() ? `
+                        <div class="announcement-controls">
+                            <button class="btn-small" onclick="editAnnouncement(${index})">✎ Editar</button>
+                            <button class="btn-small btn-danger" onclick="deleteAnnouncement(${index})">🗑 Eliminar</button>
+                            <button class="btn-small" onclick="moveAnnouncement(${index}, -1)">↑ Subir</button>
+                            <button class="btn-small" onclick="moveAnnouncement(${index}, 1)">↓ Bajar</button>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        function editAnnouncement(index) {
+            editingAnnouncementIndex = index;
+            const announcements = JSON.parse(localStorage.getItem('kenomaAnnouncements') || JSON.stringify(defaultAnnouncements));
+            const announcement = announcements[index];
+
+            document.getElementById('announcementModalTitle').textContent = 'Editar Anuncio';
+            document.getElementById('announcementTitle').value = announcement.title;
+            document.getElementById('announcementText').value = announcement.text;
+            document.getElementById('announcementModal').classList.add('active');
+        }
+
+        function openAnnouncementModal() {
+            editingAnnouncementIndex = null;
+            document.getElementById('announcementModalTitle').textContent = 'Nuevo Anuncio';
+            document.getElementById('announcementTitle').value = '';
+            document.getElementById('announcementText').value = '';
+            document.getElementById('announcementModal').classList.add('active');
+        }
+
+        function saveAnnouncement(event) {
+            event.preventDefault();
+            const announcements = JSON.parse(localStorage.getItem('kenomaAnnouncements') || JSON.stringify(defaultAnnouncements));
+            const newAnnouncement = {
+                title: document.getElementById('announcementTitle').value,
+                text: document.getElementById('announcementText').value,
+                date: new Date().toLocaleDateString('es-ES')
+            };
+
+            if (editingAnnouncementIndex !== null) {
+                announcements[editingAnnouncementIndex] = newAnnouncement;
+            } else {
+                announcements.unshift(newAnnouncement);
+                currentAnnouncementIndex = 0;
+            }
+
+            localStorage.setItem('kenomaAnnouncements', JSON.stringify(announcements));
+            editingAnnouncementIndex = null;
+            loadAnnouncements();
+            closeAnnouncementModal();
+            showSuccessMessage('Anuncio guardado exitosamente');
+        }
+
+        function deleteAnnouncement(index = null) {
+            const announcements = JSON.parse(localStorage.getItem('kenomaAnnouncements') || JSON.stringify(defaultAnnouncements));
+            const targetIndex = index !== null ? index : editingAnnouncementIndex;
+            if (targetIndex === null) return;
+
+            announcements.splice(targetIndex, 1);
+            if (announcements.length === 0) announcements.push(defaultAnnouncements[0]);
+
+            localStorage.setItem('kenomaAnnouncements', JSON.stringify(announcements));
+            editingAnnouncementIndex = null;
+            currentAnnouncementIndex = Math.max(0, Math.min(currentAnnouncementIndex, announcements.length - 1));
+            loadAnnouncements();
+            closeAnnouncementModal();
+            showSuccessMessage('Anuncio eliminado');
+        }
+
+        function moveAnnouncement(index, direction) {
+            const announcements = JSON.parse(localStorage.getItem('kenomaAnnouncements') || JSON.stringify(defaultAnnouncements));
+            const newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= announcements.length) return;
+
+            const temp = announcements[index];
+            announcements[index] = announcements[newIndex];
+            announcements[newIndex] = temp;
+
+            localStorage.setItem('kenomaAnnouncements', JSON.stringify(announcements));
+            currentAnnouncementIndex = newIndex;
+            loadAnnouncements();
+        }
+
+        function toggleAnnouncementEditor() {
+            if (editingAnnouncementIndex === null) editAnnouncement(currentAnnouncementIndex);
+            else openAnnouncementModal();
+        }
+
+        function closeAnnouncementModal() {
+            document.getElementById('announcementModal').classList.remove('active');
+        }
+
+        // ============ ADMIN PANEL ============
+        function isAdmin() {
+            const currentUser = localStorage.getItem('currentUser');
+            return currentUser === 'admin';
+        }
+
+        function initializeAdminPanel() {
+            const panel = document.getElementById('adminEditPanel');
+            panel.style.display = isAdmin() ? 'flex' : 'none';
+        }
+
+        //  GAMES 
+        function loadGames() {
+            const gamesGrid = document.getElementById('gamesGrid');
+            gamesGrid.innerHTML = '';
+
+            const currentUser = localStorage.getItem('currentUser');
+            const users = JSON.parse(localStorage.getItem('kenomaUsers') || '{}');
+            const userLibrary = currentUser && users[currentUser] ? (users[currentUser].library || []) : [];
+
+            games.forEach(game => {
+                const gameCard = document.createElement('div');
+                gameCard.className = 'game-card';
+
+                const avgRating = getAverageRating(game.id);
+                const ratingText = avgRating > 0 ? `⭐ ${avgRating.toFixed(1)}/5` : 'Sin reseñas';
+                const installed = userLibrary.includes(game.name);
+
+                gameCard.innerHTML = `
+                    <div class="game-image">${game.image}</div>
+                    <div class="game-info">
+                        <h3 class="game-title">${game.name}</h3>
+                        <p class="game-status">${game.status}</p>
+                        <p class="game-rating">${ratingText}</p>
+                        <p class="game-description">${game.description}</p>
+                        <div class="game-buttons">
+                            <button class="game-btn ${installed ? 'installed' : ''}" onclick="handleInstallOrComingSoon('${game.name}', ${game.id})">${installed ? 'Instalado' : 'Instalar'}</button>
+                            <button class="game-btn" onclick="openReviewModal(${game.id}, '${game.name}')">Reseña</button>
+                        </div>
+                    </div>
+                `;
+                gamesGrid.appendChild(gameCard);
+            });
+        }
+
+        function getAverageRating(gameId) {
+            const reviews = JSON.parse(localStorage.getItem('kenomaReviews') || '{}');
+            const gameReviews = reviews[gameId] || [];
+            if (gameReviews.length === 0) return 0;
+            const sum = gameReviews.reduce((acc, rev) => acc + rev.rating, 0);
+            return sum / gameReviews.length;
+        }
+
+        function getGameReviews(gameId) {
+            const reviews = JSON.parse(localStorage.getItem('kenomaReviews') || '{}');
+            return reviews[gameId] || [];
+        }
+
+        function ensureCurrentUserRecord() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) return null;
+
+            const users = JSON.parse(localStorage.getItem('kenomaUsers') || '{}');
+            if (!users[currentUser]) {
+                users[currentUser] = {
+                    password: '',
+                    library: [],
+                    history: [],
+                    preferences: {}
+                };
+            }
+
+            if (!Array.isArray(users[currentUser].library)) {
+                users[currentUser].library = [];
+            }
+
+            localStorage.setItem('kenomaUsers', JSON.stringify(users));
+            return users;
+        }
+
+        function handleInstallOrComingSoon(gameName, gameId) {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                openLoginModal();
+                return;
+            }
+
+            const users = ensureCurrentUserRecord();
+            if (!users || !users[currentUser]) return;
+
+            const library = users[currentUser].library || [];
+            if (!library.includes(gameName)) {
+                library.push(gameName);
+                users[currentUser].library = library;
+                localStorage.setItem('kenomaUsers', JSON.stringify(users));
+                showSuccessMessage(`${gameName} agregado a tu biblioteca`);
+            } else {
+                showSuccessMessage(`${gameName} ya estaba en tu biblioteca`);
+            }
+
+            updateLibrary();
+            loadGames();
+            showComingSoon(gameName);
+        }
+
+        //  REVIEWS
+        function openReviewModal(gameId, gameName) {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                openLoginModal();
+                return;
+            }
+
+            currentGameId = gameId;
+            currentRating = 0;
+            document.getElementById('reviewGameTitle').textContent = `Reseña de ${gameName}`;
+            document.getElementById('reviewText').value = '';
+            document.getElementById('reviewRating').value = 0;
+            resetStarRating();
+            showGameReviews(gameId);
+            document.getElementById('reviewModal').classList.add('active');
+        }
+
+        function closeReviewModal() {
+            document.getElementById('reviewModal').classList.remove('active');
+        }
+
+        function setRating(rating) {
+            currentRating = rating;
+            document.getElementById('reviewRating').value = rating;
+
+            const stars = document.querySelectorAll('.star');
+            stars.forEach((star, index) => {
+                if (index < rating) star.classList.add('active');
+                else star.classList.remove('active');
+            });
+        }
+
+        function resetStarRating() {
+            const stars = document.querySelectorAll('.star');
+            stars.forEach(star => star.classList.remove('active'));
+        }
+
+        function showGameReviews(gameId) {
+            const reviewsList = document.getElementById('reviewsList');
+            const gameReviews = getGameReviews(gameId);
+            reviewsList.innerHTML = '';
+
+            if (gameReviews.length === 0) {
+                reviewsList.innerHTML = '<div class="no-reviews">Sin reseñas aún. ¡Sé el primero!</div>';
+            } else {
+                gameReviews.forEach(review => {
+                    const reviewElement = document.createElement('div');
+                    reviewElement.className = 'review-item';
+                    reviewElement.innerHTML = `
+                        <div class="review-header">
+                            <span class="review-user">${review.user}</span>
+                            <span class="review-stars">${'⭐'.repeat(review.rating)} (${review.rating})</span>
+                        </div>
+                        <p class="review-text">${review.text}</p>
+                    `;
+                    reviewsList.appendChild(reviewElement);
+                });
+            }
+        }
+
+        function handleReview(event) {
+            event.preventDefault();
+            const currentUser = localStorage.getItem('currentUser');
+            const reviewText = document.getElementById('reviewText').value;
+            const rating = currentRating;
+
+            if (rating === 0) {
+                alert('Por favor selecciona una calificación');
+                return;
+            }
+
+            const reviews = JSON.parse(localStorage.getItem('kenomaReviews') || '{}');
+            if (!reviews[currentGameId]) reviews[currentGameId] = [];
+
+            reviews[currentGameId].push({
+                user: currentUser,
+                rating: rating,
+                text: reviewText,
+                date: new Date().toLocaleDateString('es-ES')
+            });
+
+            localStorage.setItem('kenomaReviews', JSON.stringify(reviews));
+            closeReviewModal();
+            loadGames();
+            showSuccessMessage('¡Reseña publicada exitosamente!');
+        }
+
+        //  COMING SOON =
+        function showComingSoon(gameName) {
+            document.getElementById('comingSoonGameName').textContent = gameName;
+            document.getElementById('comingSoonModal').classList.add('active');
+        }
+
+        function closeComingSoon() {
+            document.getElementById('comingSoonModal').classList.remove('active');
+        }
+
+        // AUTHENTICATION
+        function openLoginModal() {
+            document.getElementById('loginModal').classList.add('active');
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.remove('active');
+        }
+
+        function openRegisterModal() {
+            document.getElementById('registerModal').classList.add('active');
+        }
+
+        function closeRegisterModal() {
+            document.getElementById('registerModal').classList.remove('active');
+        }
+
+        function switchToRegister() {
+            closeLoginModal();
+            openRegisterModal();
+        }
+
+        function switchToLogin() {
+            closeRegisterModal();
+            openLoginModal();
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            const users = JSON.parse(localStorage.getItem('kenomaUsers') || '{}');
+
+            if (users[username] && users[username].password === password) {
+                localStorage.setItem('currentUser', username);
+                closeLoginModal();
+                document.getElementById('loginUsername').value = '';
+                document.getElementById('loginPassword').value = '';
+                checkUserStatus();
+                loadGames();
+                initializeAdminPanel();
+                showSuccessMessage('¡Bienvenido de vuelta!');
+            } else {
+                alert('Usuario o contraseña incorrectos');
+            }
+        }
+
+        function handleRegister(event) {
+            event.preventDefault();
+            const username = document.getElementById('registerUsername').value;
+            const password = document.getElementById('registerPassword').value;
+            const passwordConfirm = document.getElementById('registerPasswordConfirm').value;
+
+            if (password !== passwordConfirm) {
+                alert('Las contraseñas no coinciden');
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('kenomaUsers') || '{}');
+            if (users[username]) {
+                alert('El usuario ya existe');
+                return;
+            }
+
+            users[username] = {
+                password: password,
+                library: [],
+                history: [],
+                preferences: {}
+            };
+
+            localStorage.setItem('kenomaUsers', JSON.stringify(users));
+            localStorage.setItem('currentUser', username);
+
+            closeRegisterModal();
+            document.getElementById('registerUsername').value = '';
+            document.getElementById('registerPassword').value = '';
+            document.getElementById('registerPasswordConfirm').value = '';
+            checkUserStatus();
+            loadGames();
+            initializeAdminPanel();
+            showSuccessMessage('¡Cuenta creada exitosamente!');
+        }
+
+        function checkUserStatus() {
+            const currentUser = localStorage.getItem('currentUser');
+            const authContainer = document.getElementById('authContainer');
+            const librarySection = document.getElementById('library');
+
+            if (currentUser) {
+                ensureCurrentUserRecord();
+                authContainer.innerHTML = `
+                    <span class="user-greeting">Hola, ${currentUser}</span>
+                    <button class="btn logout-btn" onclick="handleLogout()">Cerrar Sesión</button>
+                `;
+                librarySection.style.display = 'block';
+                updateLibrary();
+            } else {
+                authContainer.innerHTML = `
+                    <button class="btn" onclick="openLoginModal()">Iniciar Sesión</button>
+                `;
+                librarySection.style.display = 'none';
+            }
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('currentUser');
+            checkUserStatus();
+            loadGames();
+            initializeAdminPanel();
+            showSuccessMessage('Has cerrado sesión');
+        }
+
+        function removeFromLibrary(gameName) {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) return;
+
+            const users = ensureCurrentUserRecord();
+            if (!users || !users[currentUser]) return;
+
+            users[currentUser].library = (users[currentUser].library || []).filter(name => name !== gameName);
+            localStorage.setItem('kenomaUsers', JSON.stringify(users));
+            updateLibrary();
+            loadGames();
+            showSuccessMessage(`${gameName} quitado de tu biblioteca`);
+        }
+
+        function updateLibrary() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) return;
+
+            const users = ensureCurrentUserRecord();
+            if (!users || !users[currentUser]) return;
+
+            const userLibrary = users[currentUser].library || [];
+            const libraryContent = document.getElementById('libraryContent');
+
+            if (userLibrary.length === 0) {
+                libraryContent.innerHTML = '<div class="empty-library"><p>Instala juegos para que aparezcan aquí</p></div>';
+            } else {
+                libraryContent.innerHTML = '<div class="installed-games"></div>';
+                const installedGames = libraryContent.querySelector('.installed-games');
+
+                userLibrary.forEach(gameName => {
+                    const game = games.find(g => g.name === gameName);
+                    if (game) {
+                        const gameElement = document.createElement('div');
+                        gameElement.className = 'installed-game';
+                        gameElement.innerHTML = `
+                            <div class="installed-game-image">${game.image}</div>
+                            <div class="installed-game-name">${game.name}</div>
+                            <div class="installed-game-status">Instalado</div>
+                            <div style="margin-top:0.8rem;">
+                                <button class="btn-small" onclick="removeFromLibrary('${game.name}')">Quitar</button>
+                            </div>
+                        `;
+                        installedGames.appendChild(gameElement);
+                    }
+                });
+            }
+        }
+
+        function showSuccessMessage(message) {
+            const old = document.querySelector('.success-message');
+            if (old) old.remove();
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'success-message';
+            messageDiv.textContent = message;
+            document.querySelector('main').insertBefore(messageDiv, document.querySelector('main').firstChild);
+
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
